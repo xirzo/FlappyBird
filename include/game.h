@@ -12,7 +12,7 @@ namespace fb {
 
     void draw(const game_state_t &state);
 
-    void update();
+    void update(game_state_t &state);
 
     void deinit();
 }

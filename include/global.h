@@ -3,8 +3,15 @@
 
 namespace fb {
     struct player_t {
-        int x;
-        int y;
+        float x;
+        float y;
+        float velocity_y;
+        float width;
+        float height;
+    };
+
+    struct world_t {
+        float gravity_constant;
     };
 
     struct game_state_t {
@@ -13,6 +20,7 @@ namespace fb {
         int target_fps;
 
         player_t player;
+        world_t world;
     };
 }
 

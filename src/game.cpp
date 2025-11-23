@@ -25,7 +25,11 @@ namespace fb {
         EndDrawing();
     }
 
-    void update() {
+    void update(game_state_t &state) {
+        float deltaTime = GetFrameTime();
+
+        state.player.velocity_y += state.world.gravity_constant * deltaTime;
+        state.player.y += state.player.velocity_y * deltaTime;
     }
 
     void deinit() {
