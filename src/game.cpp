@@ -7,6 +7,8 @@
 #include "render.h"
 
 namespace fb {
+    constexpr Color BACKGROUND_COLOR = {78, 178, 206, 255};
+
     void add_wall(game_state_t &state, float x_offset) {
         float x = static_cast<float>(state.window_width) -
                   static_cast<float>(state.window_width) / 4
@@ -75,7 +77,7 @@ namespace fb {
 
     void draw(const game_state_t &state) {
         BeginDrawing();
-        ClearBackground(BLACK);
+        ClearBackground(BACKGROUND_COLOR);
         draw_player(state);
         draw_walls(state);
         EndDrawing();
