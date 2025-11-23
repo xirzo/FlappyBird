@@ -29,59 +29,32 @@ namespace fb {
     constexpr float SWAY_AMPLITUDE = 6.0f;
 
     std::expected<void, std::string> init_renderer() {
-        if (FileExists(PLAYER_IMAGE_PATH) == false) {
-            return std::unexpected("Player image is not found");
-        }
+        auto load_texture = [](const char *path, Texture2D &texture,
+                               const char *error_message) -> std::expected<void, std::string> {
+            if (FileExists(path) == false) {
+                return std::unexpected(error_message);
+            }
 
-        Image player_image = LoadImage(PLAYER_IMAGE_PATH);
-        player_texture = LoadTextureFromImage(player_image);
-        UnloadImage(player_image);
-        SetTextureFilter(player_texture, TEXTURE_FILTER_POINT);
+            Image image = LoadImage(path);
+            texture = LoadTextureFromImage(image);
+            UnloadImage(image);
+            SetTextureFilter(texture, TEXTURE_FILTER_POINT);
+            return {};
+        };
 
-        if (FileExists(TUNNEL_LINE_IMAGE_PATH) == false) {
-            return std::unexpected("Tunnel line image is not found");
-        }
-
-        Image tunnel_line_image = LoadImage(TUNNEL_LINE_IMAGE_PATH);
-        tunnel_line_texture = LoadTextureFromImage(tunnel_line_image);
-        UnloadImage(tunnel_line_image);
-        SetTextureFilter(tunnel_line_texture, TEXTURE_FILTER_POINT);
-
-        if (FileExists(TUNNEL_END_IMAGE_PATH) == false) {
-            return std::unexpected("Tunnel end image is not found");
-        }
-
-        Image tunnel_end_image = LoadImage(TUNNEL_END_IMAGE_PATH);
-        tunnel_end_texture = LoadTextureFromImage(tunnel_end_image);
-        UnloadImage(tunnel_end_image);
-        SetTextureFilter(tunnel_end_texture, TEXTURE_FILTER_POINT);
-
-        if (FileExists(BACKGROUND_IMAGE_PATH) == false) {
-            return std::unexpected("Background image is not found");
-        }
-
-        Image background_image = LoadImage(BACKGROUND_IMAGE_PATH);
-        background_texture = LoadTextureFromImage(background_image);
-        UnloadImage(background_image);
-        SetTextureFilter(background_texture, TEXTURE_FILTER_POINT);
-
-        if (FileExists(MIDGROUND_IMAGE_PATH) == false) {
-            return std::unexpected("Midground image is not found");
-        }
-
-        Image midground_image = LoadImage(MIDGROUND_IMAGE_PATH);
-        midground_texture = LoadTextureFromImage(midground_image);
-        UnloadImage(midground_image);
-        SetTextureFilter(midground_texture, TEXTURE_FILTER_POINT);
-
-        if (FileExists(FOREGROUND_IMAGE_PATH) == false) {
-            return std::unexpected("Foreground image is not found");
-        }
-
-        Image foreground_image = LoadImage(FOREGROUND_IMAGE_PATH);
-        foreground_texture = LoadTextureFromImage(foreground_image);
-        UnloadImage(foreground_image);
-        SetTextureFilter(foreground_texture, TEXTURE_FILTER_POINT);
+        if (auto res = load_texture(PLAYER_IMAGE_PATH, player_texture, "Player image is not found"); !res)
+            return res;
+        if (auto res = load_texture(TUNNEL_LINE_IMAGE_PATH, tunnel_line_texture, "Tunnel line image is not found"); !
+            res)
+            return res;
+        if (auto res = load_texture(TUNNEL_END_IMAGE_PATH, tunnel_end_texture, "Tunnel end image is not found"); !res)
+            return res;
+        if (auto res = load_texture(BACKGROUND_IMAGE_PATH, background_texture, "Background image is not found"); !res)
+            return res;
+        if (auto res = load_texture(MIDGROUND_IMAGE_PATH, midground_texture, "Midground image is not found"); !res)
+            return res;
+        if (auto res = load_texture(FOREGROUND_IMAGE_PATH, foreground_texture, "Foreground image is not found"); !res)
+            return res;
 
         return {};
     }
@@ -136,6 +109,9 @@ namespace fb {
 
         DrawTextureEx(player_texture, {state.player.x, state.player.y}, 0.0f, scale, WHITE);
 #ifdef DEBUG_MODE
+        DrawRectangleLines(state.player.x, state.player.y, player_texture.width * static_cast<float>(scale),
+                           player_texture.height * static_cast<int>(scale),
+                           GREEN);
         DrawSphere({state.player.x, state.player.y, 8}, 10, GREEN);
 #endif
     }
