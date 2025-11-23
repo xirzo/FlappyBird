@@ -8,16 +8,20 @@ int main() {
 
     state.world.gravity_constant = 600;
 
-    state.player.x = static_cast<float>(state.window_width) / 5;
-    state.player.y = static_cast<float>(state.window_height) / 2;
+    state.player.initial_x = static_cast<float>(state.window_width) / 5;
+    state.player.initial_y = static_cast<float>(state.window_height) / 2;
 
     state.player.width = 60;
     state.player.height = 60;
 
+    state.player.jump_force = 500.0;
+    state.player.max_fall_speed = 400.0;
+    state.player.max_rise_speed = -300.0;
+
     fb::init(state);
 
     while (fb::should_close() == false) {
-        fb::process_input();
+        fb::process_input(state);
         fb::draw(state);
         fb::update(state);
     }

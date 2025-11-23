@@ -8,6 +8,11 @@ namespace fb {
         float velocity_y;
         float width;
         float height;
+        float initial_x;
+        float initial_y;
+        float jump_force;
+        float max_fall_speed;
+        float max_rise_speed;
     };
 
     struct world_t {
