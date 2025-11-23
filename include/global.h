@@ -23,6 +23,7 @@ namespace fb {
         float wall_offset;
         float wall_gap;
         float wall_width;
+        float wall_spacing;
         float wall_speed;
         float wall_unpool_x_position;
     };

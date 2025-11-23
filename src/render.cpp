@@ -115,11 +115,11 @@ namespace fb {
             double sway_d = std::sin(GetTime() * SWAY_FREQ) * SWAY_AMPLITUDE * (parallax_factor / FOREGROUND_PARALLAX);
             auto sway = static_cast<float>(sway_d);
 
-            int screen_w = GetScreenWidth();
+            auto screen_w = GetScreenWidth();
             int tiles = static_cast<int>(std::ceil((static_cast<float>(screen_w) - offset) / tile_width)) + 3;
 
             for (int i = 0; i < tiles; ++i) {
-                float x = offset + i * tile_width;
+                float x = offset + static_cast<float>(i) * tile_width;
                 DrawTextureEx(tex, {x, sway}, 0.0f, scale, tint);
             }
         };

@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 #include <chrono>
+#include <limits>
 
 #include "aabb.h"
 #include "render.h"
@@ -9,10 +10,8 @@
 namespace fb {
     constexpr Color BACKGROUND_COLOR = {78, 178, 206, 255};
 
-    void add_wall(game_state_t &state, float x_offset) {
-        float x = static_cast<float>(state.window_width) -
-                  static_cast<float>(state.window_width) / 4
-                  + x_offset;
+    void add_wall(game_state_t &state, int index) {
+        float x = state.world.wall_unpool_x_position + state.world.wall_spacing * static_cast<float>(index);
         float random_y = state.random_range(state.random_generator);
         state.walls_pool.emplace_back(x, random_y, false);
     }
@@ -43,10 +42,10 @@ namespace fb {
         state.random_range = std::uniform_real_distribution(top_random_y_position, bottom_random_y_position);
 
         add_wall(state, 0);
-        add_wall(state, 200);
-        add_wall(state, 400);
+        add_wall(state, 1);
+        add_wall(state, 2);
 
-        state.world.wall_unpool_x_position = 600;
+        state.world.wall_unpool_x_position = static_cast<float>(state.window_width) + state.world.wall_width;
     }
 
     void restart(game_state_t &state) {
@@ -57,8 +56,10 @@ namespace fb {
         state.walls_pool.clear();
 
         add_wall(state, 0);
-        add_wall(state, 200);
-        add_wall(state, 400);
+        add_wall(state, 1);
+        add_wall(state, 2);
+
+        state.world.wall_unpool_x_position = static_cast<float>(state.window_width) + state.world.wall_width;
     }
 
     void player_jump(game_state_t &state) {
@@ -130,8 +131,24 @@ namespace fb {
             }
 
             float random_y = state.random_range(state.random_generator);
+            float max_x = -std::numeric_limits<float>::infinity();
+            bool found = false;
 
-            wall.x = state.world.wall_unpool_x_position;
+            for (const wall_t &w: state.walls_pool) {
+                if (!w.is_hidden) {
+                    if (!found || w.x > max_x) {
+                        max_x = w.x;
+                    }
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                wall.x = state.world.wall_unpool_x_position;
+            } else {
+                wall.x = max_x + state.world.wall_spacing;
+            }
+
             wall.y = random_y;
             wall.is_hidden = false;
         }
